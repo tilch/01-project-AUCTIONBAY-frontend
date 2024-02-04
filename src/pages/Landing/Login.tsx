@@ -40,12 +40,23 @@ const Login: FC = () => {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
-                    <img src="/images/img.png" alt="logo" width={50} style={{ marginBottom: '170px', marginTop: '20px' }} />
-                    <LoginForm />
-                    <div style={{ flex: 1 }}></div> {/* Create space to push the link to the bottom */}
+                    <div className="circle" style={{marginBottom: '170px', marginTop: '20px'}}>
+                        <img
+                            src="/images/vector.png"
+                            alt="AuctionBay"
+                        />
+                    </div>
+                    <LoginForm/>
+                    <div style={{flex: 1}}></div>
                     <div className="fs-6" style={{marginBottom: '30px'}}>
                         Don{'\''}t have an account?{' '}
-                        <Link to={routes.SIGNUP} style={{fontSize: '16px', fontWeight: 700, lineHeight: '24px', color: 'black', textDecoration: 'none',}}>
+                        <Link to={routes.SIGNUP} style={{
+                            fontSize: '16px',
+                            fontWeight: 700,
+                            lineHeight: '24px',
+                            color: 'black',
+                            textDecoration: 'none',
+                        }}>
                             Sign Up
                         </Link>
                     </div>

@@ -24,7 +24,7 @@ const LoginForm: FC = () => {
             // Login was successful
             Cookies.set('token', response.data.result.token, { secure: true, sameSite: 'strict' })
             authStore.login(response.data.result) // Assuming authStore.login expects the token object
-            navigate('/')
+            navigate('/profile')
         } else {
             const errorMessage = 'User with these credentials does not exist'
             setApiError(errorMessage)

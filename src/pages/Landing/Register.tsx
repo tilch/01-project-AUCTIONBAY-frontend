@@ -40,8 +40,12 @@ const Login: FC = () => {
                     flexDirection: 'column', // Center items vertically
                     alignItems: 'center', // Center items horizontally
                 }}>
-                    <img src="/images/img.png" alt="logo" width={50}
-                         style={{marginBottom: '120px', marginTop: '20px'}}/>
+                    <div className="circle" style={{marginBottom: '170px', marginTop: '20px'}}>
+                        <img
+                            src="/images/vector.png"
+                            alt="AuctionBay"
+                        />
+                    </div>
                     <RegisterForm/>
                     <div style={{flex: 1}}></div>
                     {/* Create space to push the link to the bottom */}

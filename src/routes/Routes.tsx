@@ -5,6 +5,10 @@ import PrivateRoute from './PrivateRoute'
 import RestrictedRoute from './RestrictedRoute'
 import Register from '../pages/Landing/Register'
 import ForgotPassword from '../pages/Landing/ForgotPassword'
+import Profile from '../pages/Profile/MyAuctions'
+import Auctions from '../pages/Auctions/Auctions'
+import Bidding from '../pages/Profile/Bidding'
+import Won from '../pages/Profile/Won'
 
 export enum RouteType {
   PUBLIC,
@@ -29,23 +33,45 @@ const Page404 = lazy(() => import('pages/Page404'))
 
 export const AppRoutes: AppRoute[] = [
   // Restricted Routes
+  {
+      type: RouteType.PUBLIC,
+      path: '/',
+      children: <Home />,
+    },
+    {
+      type: RouteType.PUBLIC,
+      path: '/login',
+      children: <Login />,
+    },
+    {
+      type: RouteType.PUBLIC,
+      path: '/signup',
+      children: <Register />,
+    },
   // Private Routes
+  {
+    type: RouteType.PRIVATE,
+    path: '/profile',
+    children: <Profile />,
+  },
+  {
+    type: RouteType.PRIVATE,
+    path: '/auctions',
+    children: <Auctions />,
+  },
+  {
+    type: RouteType.PRIVATE,
+    path: '/bidding',
+    children: <Bidding />,
+  },
+  {
+    type: RouteType.PRIVATE,
+    path: '/won',
+    children: <Won />,
+  },
+
   // Public Routes
-  {
-    type: RouteType.PUBLIC,
-    path: '/',
-    children: <Home />,
-  },
-  {
-    type: RouteType.PUBLIC,
-    path: '/login',
-    children: <Login />,
-  },
-  {
-    type: RouteType.PUBLIC,
-    path: '/signup',
-    children: <Register />,
-  },
+
   {
     type: RouteType.PUBLIC,
     path: '/forgotpassword',

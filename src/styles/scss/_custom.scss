@@ -1,10 +1,37 @@
 .layout-container {
   height: calc(100vh - 200px);
 }
+.container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  width: 1440px;
+}
+.top-container {
+  width: 1440px; /* Set your desired width */
+  height: 38px; /* Set your desired height */
+  padding: 0px 32px; /* Set your desired padding */
+  display: flex;
+  justify-content: space-between; /* Adjust as needed */
+  align-items: center; /* Adjust as needed */
+  gap: 8px; /* Set your desired gap */
+}
+
+.heading-h1 {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 38px;
+  letter-spacing: 0em;
+  text-align: left;
+}
 
 #login-page footer,
 #signup-page footer {
   display: none !important;
+}
+
+.primaryBackground {
+  background-color: #f3f0f0;
 }
 
 .login-form,
@@ -28,6 +55,42 @@
 .topbar__avatar img {
   width: 50px !important;
   height: 50px !important;
+}
+
+.circle {
+  display: flex;
+  justify-content: center; /* Horizontally center the content */
+  align-items: center; /* Vertically center the content */
+  width: 64px;
+  height: 64px;
+  background-color: #F4FF47;
+  border-radius: 50%; /* This makes it a circle */
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 20px 32px;
+  width: 1440px;
+  height: 104px;
+  margin: 0 auto;
+}
+.left-items {
+  display: flex;
+  align-items: center;
+}
+.right-items {
+  margin-left: auto;
+}
+.navbar-link {
+  margin-right: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  color: black;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
 }
 
 .login-button {
@@ -71,6 +134,143 @@
   border-radius: 16px;
   padding: 8px 16px;
   gap: 8px;
+}
+
+.white-box {
+  width: fit-content;
+  height: 64px;
+  padding: 4px;
+  border-radius: 32px;
+  gap: 8px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.yellow-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 100px;
+  background: #F4FF47;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+
+.profile-circle {
+  width: 56px; /* Set the same width as the yellow circle */
+  height: 56px; /* Set the same height as the yellow circle */
+  border-radius: 100px;
+  gap: 4px;
+}
+
+.custom-box {
+  width: fit-content; /* Hug (251px) */
+  height: 64px; /* Fixed (64px) */
+  top: 96px;
+  left: 16px;
+  padding: 4px;
+  border-radius: 32px;
+  gap: 8px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profile-button {
+  width: fit-content;
+  height: 56px;
+  padding: 8px 16px;
+  border-radius: 32px;
+  gap: 4px;
+  background-color: #272D2D;
+  color: white;
+ }
+.auctions-nonButton {
+  width: fit-content;
+  padding: 8px 16px;
+  gap: 4px;
+  color: black;
+  background-color: white;
+  border: none;
+}
+
+.navigation-text {
+   font-size: 16px;
+   font-weight: 400;
+   line-height: 20px;
+ }
+
+.icon-image {
+  width: 20px;
+  height: 17px;
+  margin-right: 8px;
+  /* No border-radius here */
+}
+.profile-icon-image {
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  margin-right: 8px;
+}
+
+
+.triple-navigator {
+  width: 402px;
+  height: 48px;
+  position: absolute;
+  top: 164px;
+  left: 16px;
+  padding: 4px;
+  border-radius: 16px;
+  gap: 8px;
+  background: #EDF4F2;
+}
+.triple-navigator {
+  display: flex;
+  gap: 8px;
+}
+.triple-navigator button {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 16px;
+  background-color: #EDF4F2;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 24px;
+  text-align: center;
+  white-space: nowrap;
+}
+.triple-navigator-active {
+  width: 126px;
+  height: 40px;
+  padding: 8px 16px;
+  border-radius: 16px;
+  gap: 8px;
+  background: #272D2D;
+}
+.triple-navigator button:hover {
+  width: 126px;
+  height: 40px;
+  padding: 8px 16px;
+  border-radius: 16px;
+  gap: 8px;
+  background-color: #A3C2B9;
+}
+.triple-navigator button.triple-navigator-active {
+  width: 126px;
+  height: 40px;
+  padding: 8px 16px;
+  border-radius: 16px;
+  gap: 8px;
+  background: #272D2D;
+  color: white;
 }
 
 

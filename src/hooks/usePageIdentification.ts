@@ -10,7 +10,7 @@ const onHome = () => {
   document.body.id = 'home-page'
 }
 const onDashboard = () => {
-  document.title = 'Tutorial - Dashboard'
+  document.title = 'Tutorial - Profile'
   document.body.id = 'dashboard-page'
 }
 const onLogin = () => {

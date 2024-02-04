@@ -32,73 +32,54 @@ const Navbar: FC = () => {
       <>
         <header>
           {/* Adjust the container div to include your styling requirements */}
-          <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '20px 32px',
-                width: '1440px', // Fixed width
-                height: '104px', // Fixed height
-                margin: '0 auto', // Center the navbar
-              }}
-          >
-            {/* Logo Image */}
-            <img
-                src="/images/img.png"
-                alt="AuctionBay"
-                style={{
-                  width: '64px', // Hug to 64px
-                  height: '64px', // Hug to 64px
-                  padding: '16px', // Apply padding
-                  borderRadius: '100px', // Apply a large border-radius to make it round
-                  objectFit: 'cover', // This ensures the image covers the padded area properly
-                }}
-            />
+            <div className="navbar">
+                <div className="circle">
+                    <img
+                        src="/images/vector.png"
+                        alt="AuctionBay"
+                    />
+                </div>
+                <div className="fs-6" style={{display: 'flex', alignItems: 'center'}}>
+                    <Link
+                        to={routes.LOGIN}
+                        style={{
+                            marginRight: '8px',
+                            textDecoration: 'none',
+                            fontWeight: '700',
+                            color: 'black',
+                            fontSize: '16px',
+                            lineHeight: '24px',
+                            letterSpacing: '0em',
+                            textAlign: 'left',
+                        }}
+                    >
+                        Log in
+                    </Link>
+                    or
+                    <Link
+                        to={routes.SIGNUP}
+                        style={{
+                            marginLeft: '8px',
+                            fontWeight: '700',
+                            textDecoration: 'none',
+                            color: 'white',
+                            backgroundColor: 'black',
+                            padding: '8px 16px',
+                            borderRadius: '17px',
+                            fontSize: '16px',
+                            lineHeight: '24px',
+                            letterSpacing: '0em',
 
+                        }}
+                    >
+                        Sign Up
+                    </Link>
+                </div>
 
-            {/* Navigation Links */}
-            <div className="fs-6" style={{display: 'flex', alignItems: 'center'}}>
-              <Link
-                  to={routes.LOGIN}
-                  style={{
-                    marginRight: '8px',
-                    textDecoration: 'none',
-                    fontWeight: '700',
-                    color: 'black',
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    letterSpacing: '0em',
-                    textAlign: 'left',
-                  }}
-              >
-                Log in
-              </Link>
-              or
-              <Link
-                  to={routes.SIGNUP}
-                  style={{
-                    marginLeft: '8px',
-                    fontWeight: '700',
-                    textDecoration: 'none',
-                    color: 'white',
-                    backgroundColor: 'black',
-                    padding: '8px 16px',
-                    borderRadius: '17px',
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    letterSpacing: '0em',
-
-                  }}
-              >
-                Sign Up
-              </Link>
             </div>
-
-          </div>
         </header>
-        {showError && (
-            <ToastContainer className="p-3" position="top-end">
+          {showError && (
+              <ToastContainer className="p-3" position="top-end">
               <Toast onClose={() => setShowError(false)} show={showError} delay={3000} autohide>
                 <Toast.Header>
                   <strong className="me-auto text-danger">Error</strong>
