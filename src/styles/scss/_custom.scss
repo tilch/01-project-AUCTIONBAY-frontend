@@ -29,3 +29,48 @@
   width: 50px !important;
   height: 50px !important;
 }
+
+.login-button {
+  background-color: #F4FF47;
+  height: 40px;
+  color: #000000; /* Text color (usually black for good contrast with yellow) */
+  border-radius: 20px; /* Adjust the value for desired roundness */
+  border: 0px solid #DDE9E6; /* Border: 1px solid with the specified color */
+  transition: background-color 0.5s; /* Smooth transition for background color */
+  font-size: 16px; /* Font size */
+  font-weight: 500; /* Font weight */
+  line-height: 24px; /* Line height */
+}
+.login-button:active {
+  animation-timing-function: ease-out;
+  animation-duration: 300ms;
+}
+
+
+.form-field {
+  width: 100%; /* Width: Fill (100%) */
+  height: 40px; /* Height: 40px */
+  padding: 8px 16px; /* Padding: 8px 16px */
+  border: 1px solid #DDE9E6; /* Border: 1px solid with the specified color */
+  border-radius: 16px; /* Border-radius: 16px */
+  gap: 8px; /* Gap: 8px */
+  transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+.form-field:focus {
+  outline: none; /* Remove the default blue outline on focus */
+}
+
+.login-button:hover {
+  background-color: #F4FF47;
+}
+
+.startBidding-button {
+  background-color: #F4FF47;
+  color: #000000;
+  border-radius: 16px;
+  padding: 8px 16px;
+  gap: 8px;
+}
+
+

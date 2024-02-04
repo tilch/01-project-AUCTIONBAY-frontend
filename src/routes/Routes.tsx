@@ -3,6 +3,8 @@ import { Route, RouteProps, Routes as Switch } from 'react-router-dom'
 
 import PrivateRoute from './PrivateRoute'
 import RestrictedRoute from './RestrictedRoute'
+import Register from '../pages/Landing/Register'
+import ForgotPassword from '../pages/Landing/ForgotPassword'
 
 export enum RouteType {
   PUBLIC,
@@ -15,7 +17,8 @@ type AppRoute = RouteProps & {
 }
 
 /* Public routes */
-const Home = lazy(() => import('pages/Home'))
+const Home = lazy(() => import('pages/Landing/Home'))
+const Login = lazy(() => import('pages/Landing/Login'))
 
 /* Private routes */
 
@@ -32,6 +35,21 @@ export const AppRoutes: AppRoute[] = [
     type: RouteType.PUBLIC,
     path: '/',
     children: <Home />,
+  },
+  {
+    type: RouteType.PUBLIC,
+    path: '/login',
+    children: <Login />,
+  },
+  {
+    type: RouteType.PUBLIC,
+    path: '/signup',
+    children: <Register />,
+  },
+  {
+    type: RouteType.PUBLIC,
+    path: '/forgotpassword',
+    children: <ForgotPassword />,
   },
   // 404 Error
   {
