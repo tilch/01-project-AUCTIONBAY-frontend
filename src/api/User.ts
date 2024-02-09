@@ -3,25 +3,36 @@ import { apiRoutes } from '../constants/apiConstants'
 import { LoginUserFields } from '../hooks/react-hook-form/useLogin'
 import { UserType } from '../models/auth'
 import { RegisterUserFields } from '../hooks/react-hook-form/useRegister'
-import {
-  CreateUserFields,
-  UpdateUserFields,
-} from '../hooks/react-hook-form/useCreateUpdateUser'
+import axios from 'axios'
+import Cookies from 'js-cookie'
 
-export const fetchUser = async () =>
-  apiRequest<undefined, UserType>('get', apiRoutes.FETCH_USER)
+const getJwtTokenFromCookie = () => {
+  const jwtToken = Cookies.get('token')
+  if (!jwtToken) {
+    throw new Error('JWT token not found or expired')
+  }
+  return jwtToken
+}
+
+export const fetchMe = async () => {
+  const jwtToken = getJwtTokenFromCookie()
+  const response = await axios.get(apiRoutes.FETCH_ME, {
+    baseURL: process.env.REACT_APP_API_URL,
+    headers: {
+      'Authorization': `Bearer ${jwtToken}`,
+      'Content-Type': 'application/json',
+    },
+  })
+  return response.data
+}
 
 export const login = async (data: LoginUserFields) =>
   apiRequest<LoginUserFields, UserType>('post', apiRoutes.LOGIN, data)
 
-export const deleteUser = async (id: string) =>
-  apiRequest<string, UserType>('delete', `${apiRoutes.USERS_PREFIX}/${id}`)
 
 export const register = async (data: RegisterUserFields) =>
   apiRequest<RegisterUserFields, void>('post', apiRoutes.SIGNUP, data)
 
-export const createUser = async (data: CreateUserFields) =>
-  apiRequest<CreateUserFields, void>('post', apiRoutes.USERS_PREFIX, data)
 
 export const uploadAvatar = async (formData: FormData, id: string) =>
   apiRequest<FormData, void>(
@@ -30,24 +41,10 @@ export const uploadAvatar = async (formData: FormData, id: string) =>
     formData,
   )
 
-export const getAvatar = async () =>
-  apiRequest<undefined, void>('get', apiRoutes.GET_AVATAR_IMAGE)
-
-export const updateUser = async (data: UpdateUserFields, id: string) =>
-  apiRequest<UpdateUserFields, void>(
-    'patch',
-    `${apiRoutes.USERS_PREFIX}/${id}`,
-    data,
-  )
 
 export const signout = async () =>
   apiRequest<undefined, void>('post', apiRoutes.SIGNOUT)
 
-export const fetchUsers = async (pageNumber: number) =>
-  apiRequest<null, UserType[]>(
-    'get',
-    `${apiRoutes.FETCH_USERS}?page=${pageNumber}`,
-  )
 
 export const refreshTokens = async () =>
   apiRequest<undefined, UserType>('get', apiRoutes.REFRESH_TOKENS)

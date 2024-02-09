@@ -1,12 +1,15 @@
 .layout-container {
   height: calc(100vh - 200px);
 }
-.container {
+.container-1440 {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
   width: 1440px;
+  margin: 0 auto; /* Horizontally center the container within its parent */
+  /* Add any other necessary styles */
 }
+
+
 .top-container {
   width: 1440px; /* Set your desired width */
   height: 38px; /* Set your desired height */
@@ -17,7 +20,24 @@
   gap: 8px; /* Set your desired gap */
 }
 
-.heading-h1 {
+.app-wrapper {
+  min-height: 100vh;
+  background-color: #F6F6F4; /* Your desired color */
+}
+
+.heading-container {
+  width: 1440px; /* Your desired width */
+  padding: 15px 32px 32px; /* Adjusted padding (top, right & bottom, left) */
+  gap: 16px; /* Gap between child elements */
+  margin: 0 auto; /* Centers the block horizontally */
+  display: flex; /* Assuming you want its children to be flex items */
+  flex-direction: column; /* Stack children vertically */
+  align-items: start; /* Align children horizontally in the middle */
+}
+
+
+.custom-heading {
+  font-family: 'Inter', sans-serif;
   font-size: 32px;
   font-weight: 700;
   line-height: 38px;
@@ -25,13 +45,14 @@
   text-align: left;
 }
 
+
 #login-page footer,
 #signup-page footer {
   display: none !important;
 }
 
 .primaryBackground {
-  background-color: #f3f0f0;
+  background-color: #F6F6F4;
 }
 
 .login-form,
@@ -221,7 +242,6 @@
 .triple-navigator {
   width: 402px;
   height: 48px;
-  position: absolute;
   top: 164px;
   left: 16px;
   padding: 4px;
@@ -271,6 +291,210 @@
   gap: 8px;
   background: #272D2D;
   color: white;
+}
+
+
+.auctions-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* Creates 6 columns */
+  gap: 10px; /* Adjust the gap between items as needed */
+  padding: 0px 32px 32px 32px; /* top right bottom left padding */
+  gap: 16px
+
+}
+
+/* Styles for the auction card */
+.auction-profile-card {
+  width: 216px;
+  height: 298px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Keep content aligned horizontally */
+  justify-content: space-between; /* Align items to the start of the flex container */
+}
+
+
+.auction-profile-image {
+  width: 208px;
+  height: 198px;
+  border-radius: 12px;
+  margin-top: auto; /* Pushes the image to the bottom */
+  align-self: center; /* Ensures the image is centered within its flex container */
+}
+
+
+.auction-profile-text {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  text-align: left;
+  align-self: start;
+  color: #071015;
+  width: 100%; /* Ensures text container uses full available width */
+}
+
+.done-element {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 33px;
+  padding: 2px 4px; /* Padding: top and bottom 2px, left and right 4px */
+  height: 16px;
+  border-radius: 8px;
+  background: #272D2D;
+  gap: 8px; /* Space between items in the flex container */
+}
+.in-progress-element {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  padding: 2px 4px; /* Padding: top and bottom 2px, left and right 4px */
+  height: 16px;
+  border-radius: 8px;
+  background: #F9FF90;
+  gap: 8px; /* Space between items in the flex container */
+ }
+
+
+.container-of-texts {
+  justify-content: space-evenly;
+  width: 216px;
+  height: 92px;
+  padding: 8px 8px 4px 8px; /* top right bottom left */
+  gap: 8px;
+}
+.element-twohundred {
+  width: 200px;
+  height: 24px;
+}
+
+
+.caption {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 12px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: white;
+}
+.caption-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 24px;
+  text-align: left;
+}
+.caption-price {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 550;
+  line-height: 24px;
+  text-align: left;
+  color: #071015;
+}
+  .in-progress-element-container {
+    margin-top: 7px;
+    margin-bottom: 5px;
+    display: flex;
+    width: 200px;
+    justify-content: space-between;
+    align-items: center;
+    height: auto;
+  }
+.hours-remaining-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 12px;
+  text-align: left;
+}
+.hours-remaining-container {
+  margin-right: 3px;
+  display: flex;
+  flex-direction: row;
+  height: 16px;
+  padding: 2px 4px; /* top and bottom padding, left and right padding */
+  border-radius: 8px;
+  gap: 4px;
+}
+
+.auction-normal-image-container {
+  width: 216px;
+  height: 206px;
+  padding: 4px;
+  gap: 8px;
+}
+
+.auction-profile-image-editable {
+  width: 208px;
+  height: 150px;
+  border-radius: 12px;
+  margin-top: auto; /* Pushes the image to the bottom */
+  align-self: center; /* Ensures the image is centered within its flex container */
+}
+
+.edit-delete-container {
+  margin-top: 7px;
+  width: 208px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  height: auto; /* Allow height to adjust based on content */
+}
+.edit-btn {
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  width: 156px;
+  height: auto; /* Allow the height to adjust based on content */
+  padding: 8px 16px; /* top and bottom padding, left and right padding */
+  border-radius: 16px;
+  gap: 8px;
+  background: #272D2D;
+  color: white;
+}
+.edit-btn-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.edit-btn-content {
+  display: flex;
+  align-items: center; /* Center content horizontally in a row layout */
+}
+
+
+.delete-btn {
+  display: flex; /* Use flexbox layout */
+  justify-content: center; /* Horizontally center the content */
+  align-items: center; /* Vertically center the content */
+  width: 48px;
+  height: 40px;
+  padding: 8px 16px; /* top and bottom padding, left and right padding */
+  border-radius: 16px;
+  border: 1px solid; /* Adding a border, specify the border color and style if needed */
+  gap: 8px;
+}
+
+.bidding-container {
+  width: 216px;
+  height: 250px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Keep content aligned horizontally */
+  justify-content: space-between; /* Align items to the start of the flex container */
 }
 
 
