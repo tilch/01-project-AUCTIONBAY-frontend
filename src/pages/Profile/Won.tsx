@@ -4,6 +4,7 @@ import {useQuery} from 'react-query'
 import {fetchWon} from '../../api/Auctions'
 import {AuctionType} from '../../models/Auction'
 import WonNavigator from '../../components/ui/navigators/wonNavigator'
+import {Link} from 'react-router-dom'
 
 const Profile: FC = () => {
 
@@ -32,7 +33,8 @@ const Profile: FC = () => {
 
                 if (status === 'Done') {
                     return (
-                        <div key={auction.id} className="auction-profile-card">
+                        <Link to={`/auction/${auction.id}`} key={auction.id} className="bidding-container" style={{ textDecoration: 'none' }}>
+                        <div key={auction.id} className="auction-profile-card-won">
                             <div className="auction-texts-container"></div>
 
                             <div className="in-progress-element-container">
@@ -52,11 +54,12 @@ const Profile: FC = () => {
                             <div className="auction-normal-image-container">
                                 <img
                                     className='auction-profile-image'
-                                    src="/images/testing/chair.jpg"
+                                    src={`${process.env.REACT_APP_API_URL}${auction.imageUrl}`}
                                     alt="Auction Image"
                                 />
                             </div>
                         </div>
+                        </Link>
                     )
                 }
                 return null

@@ -9,6 +9,7 @@ import Profile from '../pages/Profile/MyAuctions'
 import Auctions from '../pages/Auctions/Auctions'
 import Bidding from '../pages/Profile/Bidding'
 import Won from '../pages/Profile/Won'
+import AuctionDetail from '../pages/Profile/AuctionDetail'
 
 export enum RouteType {
   PUBLIC,
@@ -68,6 +69,11 @@ export const AppRoutes: AppRoute[] = [
     type: RouteType.PRIVATE,
     path: '/won',
     children: <Won />,
+  },
+  {
+    type: RouteType.PRIVATE,
+    path: '/auction/:id',
+    children: <AuctionDetail />,
   },
 
   // Public Routes

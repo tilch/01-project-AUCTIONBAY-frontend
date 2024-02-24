@@ -7,6 +7,7 @@ export type AuctionType = {
   startTime: Date
   endTime: Date
   imageUrl: string
+  currentWinner: string
   userId: string
   createdAt: Date
   updatedAt: Date

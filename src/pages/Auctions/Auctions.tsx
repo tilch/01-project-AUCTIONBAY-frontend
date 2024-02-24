@@ -1,17 +1,17 @@
 import React, {FC} from 'react'
 import LoggedInNavBar from '../../components/ui/LoggedInNavBar'
 import {useQuery} from 'react-query'
-import {fetchAllAuctions, fetchBidding} from '../../api/Auctions'
+import {fetchAllAuctions} from '../../api/Auctions'
 import {AuctionType} from '../../models/Auction'
-
 
 const Profile: FC = () => {
 
-    function getAuctionStatusAndTime(auction: AuctionType): [string, string | null] {
+    function getAuctionStatusAndTime(auction: AuctionType): [string, string | null, boolean] {
         const now = new Date()
         const startTime = new Date(auction.startTime)
         const endTime = new Date(auction.endTime)
         let formattedTimeRemaining: string | null = null
+        let isLessThan24HoursLeft = false
 
         if (now >= startTime && now <= endTime) {
             const msRemaining = endTime.getTime() - now.getTime()
@@ -23,16 +23,16 @@ const Profile: FC = () => {
             } else {
                 const roundedHoursRemaining = Math.ceil(hoursRemaining)
                 formattedTimeRemaining = `${roundedHoursRemaining}h`
+                isLessThan24HoursLeft = true // mark as true if less than or equal to 24 hours left
             }
 
-            return ['In Progress', formattedTimeRemaining]
+            return ['In Progress', formattedTimeRemaining, isLessThan24HoursLeft]
         } else if (now > endTime) {
-            return ['Done', null]
+            return ['Done', null, false]
         } else {
-            return ['Not Started', null]
+            return ['Not Started', null, false]
         }
     }
-
 
     const { data, isLoading, error } = useQuery('fetchAllAuctions', fetchAllAuctions, {
         keepPreviousData: true,
@@ -44,11 +44,11 @@ const Profile: FC = () => {
         if (error) return <p>There was an error fetching the auctions.</p>
         if (data && data.length > 0) {
             return data.map((auction: AuctionType) => {
-                const [status, hoursRemaining] = getAuctionStatusAndTime(auction)
+                const [status, hoursRemaining, isLessThan24HoursLeft] = getAuctionStatusAndTime(auction)
                 const isAuctionInProgress = status === 'In Progress'
 
                 return (
-                    <div key={auction.id} className="bidding-container ">
+                    <div key={auction.id} className="bidding-container">
                         {isAuctionInProgress ? (
                             <div className="auction-texts-container"></div>
                         ) : (
@@ -57,33 +57,43 @@ const Profile: FC = () => {
                             </div>
                         )}
 
-                        <div className="in-progress-element-container " style={{ paddingBottom: '6px' }}>
+                        <div className="in-progress-element-container" style={{ paddingBottom: '6px' }}>
                             {status === 'Done' ? (
                                 <div className="done-element">
                                     <div className="caption">Done</div>
                                 </div>
                             ) : null}
 
-                            {isAuctionInProgress && hoursRemaining !== null ? (
-                                <>
-                                    <div className="in-progress-element">
-                                        <div className="caption" style={{color: 'black'}}>
-                                            In progress
-                                        </div>
+                            {isAuctionInProgress && hoursRemaining !== null && (
+                                <div className="in-progress-element">
+                                    <div className="caption" style={{color: 'black'}}>
+                                        In progress
                                     </div>
-                                    <div className="hours-remaining-container">
-                                        <div className="hours-remaining">
-                                            <div className="hours-remaining-text">
-                                                {hoursRemaining}
-                                            </div>
-                                        </div>
+                                </div>
+                            )}
+
+                            {isAuctionInProgress && hoursRemaining !== null && isLessThan24HoursLeft ? (
+                                <div className="only-24h-left">
+                                    <div className="hours-remaining-text">
+                                        {hoursRemaining}&nbsp;&nbsp;
                                         <img
-                                            style={{width: '10px', height: '10px'}}
-                                            src="/images/icons/hours_left.png"
-                                            alt="hours_left_icon"
-                                        />
+                                        style={{width: '10px', height: '10px'}}
+                                        src="/images/icons/hours_left.png"
+                                        alt="hours_left_icon"
+                                    />
                                     </div>
-                                </>
+                                </div>
+                            ) : isAuctionInProgress && hoursRemaining !== null ? (
+                                <div className="hours-remaining">
+                                    <div className="hours-remaining-text">
+                                        {hoursRemaining}&nbsp;
+                                        <img
+                                        style={{width: '10px', height: '10px'}}
+                                        src="/images/icons/hours_left.png"
+                                        alt="hours_left_icon"
+                                    />
+                                    </div>
+                                </div>
                             ) : null}
                         </div>
 
@@ -109,11 +119,10 @@ const Profile: FC = () => {
         return <p>No auctions to display.</p>
     }
 
-
     return (
         <>
             <LoggedInNavBar/>
-            <div className="container-1440 primaryBackground" >
+            <div className="container-1440 primaryBackground">
                 <div className="parent d-flex flex-column align-items-center">
                     <div className="auctions-container" style={{paddingTop: '18px'}}>
                         {renderAuctions()}
@@ -121,8 +130,6 @@ const Profile: FC = () => {
                 </div>
             </div>
         </>
-
-
     )
 }
 

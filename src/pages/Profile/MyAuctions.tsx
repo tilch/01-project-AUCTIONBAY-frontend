@@ -1,27 +1,33 @@
 import React, {FC} from 'react'
 import LoggedInNavBar from '../../components/ui/LoggedInNavBar'
 import MyAuctionsNavigator from '../../components/ui/navigators/myAuctionsNavigator'
-import * as API from 'api/Api'
 import {useQuery} from 'react-query'
 import {fetchMyAuctions} from '../../api/Auctions'
 import {AuctionType} from '../../models/Auction'
+import {Link} from 'react-router-dom'
+import DoneSmall from '../../components/ui/tags/small/status/done'
+import InProgressSmall from '../../components/ui/tags/small/status/inprogress'
+import MoreThanADayTagSmall from '../../components/ui/tags/small/time/moreThanADay'
+import LastDayTagSmall from '../../components/ui/tags/small/time/lastDay'
 
 const Profile: FC = () => {
 
-    function getAuctionStatusAndTime(auction: AuctionType): [string, number | null] {
+    function getAuctionStatusAndTime(auction: AuctionType): [string, number | null, number | null] {
         const now = new Date()
         const startTime = new Date(auction.startTime)
         const endTime = new Date(auction.endTime)
         let hoursRemaining: number | null = null
+        let daysRemaining: number | null = null
 
         if (now >= startTime && now <= endTime) {
             const msRemaining = endTime.getTime() - now.getTime()
-            hoursRemaining = Math.ceil(msRemaining / (1000 * 60 * 60)) // Convert milliseconds to hours and round up
-            return ['In Progress', hoursRemaining]
+            hoursRemaining = Math.ceil(msRemaining / (1000 * 60 * 60))
+            daysRemaining = Math.ceil(msRemaining / (1000 * 60 * 60) / 24)
+            return ['In Progress', hoursRemaining, daysRemaining]
         } else if (now > endTime) {
-            return ['Done', null]
+            return ['Done', null, null]
         } else {
-            return ['Not Started', null]
+            return ['Not Started', null, null]
         }
     }
 
@@ -37,46 +43,27 @@ const Profile: FC = () => {
         if (error) return <p>There was an error fetching the auctions.</p>
         if (data && data.length > 0) {
             return data.map((auction: AuctionType) => {
-                const [status, hoursRemaining] = getAuctionStatusAndTime(auction)
+                const [status, hoursRemaining, daysRemaining] = getAuctionStatusAndTime(auction)
                 const isAuctionInProgress = status === 'In Progress'
 
                 return (
                     <div key={auction.id} className="auction-profile-card ">
                         {/* Conditionally render auction-texts-container based on auction status */}
-                        {isAuctionInProgress ? (
-                            <div className="auction-texts-container"></div>
-                        ) : (
-                            <div className="auction-texts-container">
-                                {/* Default content */}
-                            </div>
-                        )}
-
+                        <Link to={`/auction/${auction.id}`} key={auction.id} style={{ textDecoration: 'none' }}>
                         <div className="in-progress-element-container">
                             {status === 'Done' ? (
-                                <div className="done-element">
-                                    <div className="caption">Done</div>
-                                </div>
+                                <DoneSmall/>
                             ) : null}
 
-                            {isAuctionInProgress && hoursRemaining !== null ? (
+                            {daysRemaining !== null && hoursRemaining !== null ? (
                                 <>
-                                    <div className="in-progress-element">
-                                        <div className="caption" style={{color: 'black'}}>
-                                            In progress
-                                        </div>
-                                    </div>
-                                    <div className="hours-remaining-container">
-                                        <div className="hours-remaining">
-                                            <div className="hours-remaining-text">
-                                                {hoursRemaining}h
-                                            </div>
-                                        </div>
-                                        <img
-                                            style={{width: '10px', height: '10px'}}
-                                            src="/images/icons/hours_left.png"
-                                            alt="hours_left_icon"
-                                        />
-                                    </div>
+                                    <InProgressSmall />
+                                    {hoursRemaining > 25 ? (
+                                        <MoreThanADayTagSmall time={daysRemaining} />
+                                    ) : (
+                                        <LastDayTagSmall />
+                                    )}
+
                                 </>
                             ) : null}
                         </div>
@@ -86,15 +73,31 @@ const Profile: FC = () => {
                         </div>
 
                         <div className="element-twohundred" style={{marginBottom: '5px', marginTop: '5px'}}>
-                            <div className="caption-price">{auction.currentPrice} €</div>
-                        </div>
+                            {auction.currentPrice !== null ? (
+                                <div className="caption-price">{auction.currentPrice} €</div>
+                            ) : (
+                                <div className="caption-price">{auction.startPrice} €</div>
+                            )}
 
+                        </div>
+                        </Link>
                         <div className="auction-normal-image-container">
-                            <img
-                                className={isAuctionInProgress ? 'auction-profile-image-editable' : 'auction-profile-image'}
-                                src="/images/testing/chair.jpg"
-                                alt="Auction Image"
-                            />
+                            <Link to={`/auction/${auction.id}`} key={auction.id} style={{ textDecoration: 'none' }}>
+                            {isAuctionInProgress ? (
+                                <img
+                                    className={isAuctionInProgress ? 'auction-profile-image-editable' : 'auction-profile-image'}
+                                    src={`${process.env.REACT_APP_API_URL}${auction.imageUrl}`}
+                                    alt="Auction Image"
+                                    style={{ height: '150px' }}
+                                />
+                            ) : (
+                                <img
+                                    className={isAuctionInProgress ? 'auction-profile-image-editable' : 'auction-profile-image'}
+                                    src={`${process.env.REACT_APP_API_URL}${auction.imageUrl}`}
+                                    alt="Auction Image"
+                                />
+                            )}
+                            </Link>
                             {isAuctionInProgress && (
                                 <div className="edit-delete-container">
                                     <div className="delete-btn" >
