@@ -10,6 +10,9 @@ export enum apiRoutes {
   PLACE_BID = '/bids',
 
   PLACE_AUCTION = '/auctions',
+
+  DELETE_AUCTION = '/auctions/',
+
   FETCH_ALLAUCTIONS = '/auctions',
   FETCH_MYAUCTIONS = '/auctions/my-auctions',
   FETCH_BIDDING = '/auctions/bidding',

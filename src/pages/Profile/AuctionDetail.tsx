@@ -153,6 +153,7 @@ const AuctionDetail = () => {
                     <div className="item-detail-description">
                         <div className="time-element">
                             {biddingStatus === 'inProgress' && <InProgressDefault/>}
+
                             {biddingStatus === 'winning' && <WinningDefault/>}
                             {biddingStatus === 'outbid' && <OutbidDefault/>}
 
@@ -165,22 +166,25 @@ const AuctionDetail = () => {
                         <div className="item-detail-description-container item-detail-description-text">
                             {auction?.description || ''}
                         </div>
-                        <div className="item-detail-placing-bid">
-                            Bid:
-                            <div className="bid-input-container">
-                                <input
-                                    type="text"
-                                    value={bidAmount}
-                                    onChange={(e) => setBidAmount(e.target.value)}
-                                />
+
+                        {remainingDays !== null && (
+                            <div className="item-detail-placing-bid">
+                                Bid:
+                                <div className="bid-input-container">
+                                    <input
+                                        type="text"
+                                        value={bidAmount}
+                                        onChange={(e) => setBidAmount(e.target.value)}
+                                    />
+                                </div>
+                                <div
+                                    className="place-bid-yellow-container place-bid-text"
+                                    onClick={submitBid} // Use the submitBid function here
+                                >
+                                    Place bid
+                                </div>
                             </div>
-                            <div
-                                className="place-bid-yellow-container place-bid-text"
-                                onClick={submitBid} // Use the submitBid function here
-                            >
-                                Place bid
-                            </div>
-                        </div>
+                        )}
 
                     </div>
                     <div className="item-detail-bidding-history">

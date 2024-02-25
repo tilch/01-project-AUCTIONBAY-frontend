@@ -1,16 +1,29 @@
-import React, {FC} from 'react'
+import React, {FC, useState} from 'react'
 import LoggedInNavBar from '../../components/ui/LoggedInNavBar'
 import MyAuctionsNavigator from '../../components/ui/navigators/myAuctionsNavigator'
-import {useQuery} from 'react-query'
-import {fetchMyAuctions} from '../../api/Auctions'
+import { useQuery, useQueryClient } from 'react-query'
+import {deleteAuction, fetchMyAuctions} from '../../api/Auctions'
 import {AuctionType} from '../../models/Auction'
 import {Link} from 'react-router-dom'
 import DoneSmall from '../../components/ui/tags/small/status/done'
 import InProgressSmall from '../../components/ui/tags/small/status/inprogress'
 import MoreThanADayTagSmall from '../../components/ui/tags/small/time/moreThanADay'
 import LastDayTagSmall from '../../components/ui/tags/small/time/lastDay'
+import {queryClient} from '../../index'
 
 const Profile: FC = () => {
+    const handleDeleteClick = async (auctionId: string) => {
+        const confirmed = window.confirm('Are you sure you want to delete this auction?')
+        if (confirmed) {
+            try {
+                await deleteAuction(auctionId)
+                await queryClient.invalidateQueries('fetchMyAuctions')
+                console.log(`Auction ${auctionId} deleted successfully.`)
+            } catch (error) {
+                console.error('Error deleting auction:', error)
+            }
+        }
+    }
 
     function getAuctionStatusAndTime(auction: AuctionType): [string, number | null, number | null] {
         const now = new Date()
@@ -100,17 +113,16 @@ const Profile: FC = () => {
                             </Link>
                             {isAuctionInProgress && (
                                 <div className="edit-delete-container">
-                                    <div className="delete-btn" >
-                                        <img
-                                            style={{ width: '9.33px', height: '12px'}}
-                                            src="/images/icons/trash_black.png"
-                                            alt="black_trash"
-                                        />
-                                    </div>
+                                    <button className="delete-btn" onClick={() => handleDeleteClick(auction.id)}>
+                                        <img style={{width: '9.33px', height: '12px'}}
+                                             src="/images/icons/trash_black.png" alt="black_trash"/>
+                                    </button>
+
+
                                     <div className="edit-btn">
                                         <div className="edit-btn-content edit-btn-text">
                                             <img
-                                                style={{width: '12px', height: '12px', marginRight: '7px' }}
+                                                style={{width: '12px', height: '12px', marginRight: '7px'}}
                                                 src="/images/icons/pencil_white.png"
                                                 alt="white_pencil"
                                             />
@@ -130,8 +142,8 @@ const Profile: FC = () => {
 
     return (
         <>
-            <LoggedInNavBar/>
-            <div className="container-1440 primaryBackground" >
+        <LoggedInNavBar/>
+            <div className="container-1440 primaryBackground">
                 <div className="parent d-flex flex-column align-items-center">
                     <MyAuctionsNavigator/>
                     <div className="auctions-container" style={{paddingTop: '18px'}}>

@@ -87,3 +87,20 @@ export const fetchAuctionDetails = async (id: number) => {
     })
     return response.data
 }
+
+export const deleteAuction = async (auctionId: string) => {
+    const jwtToken = getJwtTokenFromCookie()
+    try {
+        const response = await axios.delete(`${apiRoutes.DELETE_AUCTION}${auctionId}`, {
+            baseURL: process.env.REACT_APP_API_URL,
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`,
+                'Content-Type': 'application/json',
+            },
+        })
+        return response.data
+    } catch (error) {
+        console.error('Error deleting auction:', error)
+        throw new Error('Failed to delete auction. Please try again.')
+    }
+}

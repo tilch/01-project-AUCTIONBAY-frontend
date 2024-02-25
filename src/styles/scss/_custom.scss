@@ -498,6 +498,7 @@
   border-radius: 16px;
   border: 1px solid; /* Adding a border, specify the border color and style if needed */
   gap: 8px;
+  background-color: transparent; /* Set background color to transparent */
 }
 
 .bidding-container {
@@ -508,7 +509,7 @@
   display: flex;
   flex-direction: column;
   align-items: center; /* Keep content aligned horizontally */
-  justify-content: space-between; /* Align items to the start of the flex container */
+  justify-content: space-evenly; /* Align items to the start of the flex container */
 }
 
 .only-24h-left {
@@ -596,6 +597,7 @@ h1 {
   text-align: left;
 }
 .item-detail-description-container {
+  height: 96px;
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 300;
@@ -776,7 +778,7 @@ h1 {
   color: #071015;
 }
 .winning-default {
-  width: 76px;
+  width: auto;
   height: 28px;
   padding: 2px 8px;
   border-radius: 16px;
