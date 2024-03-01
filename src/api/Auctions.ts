@@ -29,12 +29,49 @@ export const placeAuction = async (formData: FormData) => {
     }
 }
 
+export const deleteAuction = async (auctionId: string) => {
+    const jwtToken = getJwtTokenFromCookie()
+    try {
+        const response = await axios.delete(`${apiRoutes.DELETE_AUCTION}${auctionId}`, {
+            baseURL: process.env.REACT_APP_API_URL,
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`,
+                'Content-Type': 'application/json',
+            },
+        })
+        return response.data
+    } catch (error) {
+        console.error('Error deleting auction:', error)
+        throw new Error('Failed to delete auction. Please try again.')
+    }
+}
+
+export const updateAuction = async (auctionId: string, formData: FormData) => {
+    const jwtToken = getJwtTokenFromCookie()
+    const url = `${process.env.REACT_APP_API_URL}${apiRoutes.UPDATE_AUCTION}${auctionId}`
+
+    try {
+        const response = await axios.patch(url, formData, {
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`,
+            },
+        })
+        return response.data
+    } catch (error) {
+        console.error('Error updating auction:', error)
+        throw new Error('Failed to update auction. Please try again.')
+    }
+}
+
+
 
 
 export const fetchAllAuctions = async () => {
+    const jwtToken = getJwtTokenFromCookie()
     const response = await axios.get(apiRoutes.FETCH_ALLAUCTIONS, {
         baseURL: process.env.REACT_APP_API_URL,
         headers: {
+            'Authorization': `Bearer ${jwtToken}`,
             'Content-Type': 'application/json',
         },
     })
@@ -88,19 +125,3 @@ export const fetchAuctionDetails = async (id: number) => {
     return response.data
 }
 
-export const deleteAuction = async (auctionId: string) => {
-    const jwtToken = getJwtTokenFromCookie()
-    try {
-        const response = await axios.delete(`${apiRoutes.DELETE_AUCTION}${auctionId}`, {
-            baseURL: process.env.REACT_APP_API_URL,
-            headers: {
-                'Authorization': `Bearer ${jwtToken}`,
-                'Content-Type': 'application/json',
-            },
-        })
-        return response.data
-    } catch (error) {
-        console.error('Error deleting auction:', error)
-        throw new Error('Failed to delete auction. Please try again.')
-    }
-}

@@ -11,4 +11,5 @@ export type AuctionType = {
   userId: string
   createdAt: Date
   updatedAt: Date
+  userHasBid?: boolean
 }

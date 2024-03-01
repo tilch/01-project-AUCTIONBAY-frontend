@@ -1,15 +1,15 @@
-import React, { FC, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import React, {FC, useEffect, useState} from 'react'
+import {useLocation, useNavigate} from 'react-router-dom'
 import authStore from 'stores/auth.store'
 import * as API from 'api/Api'
-import { StatusCode } from 'constants/errorConstants'
+import {fetchMe, updateUser} from 'api/Api'
+import {StatusCode} from 'constants/errorConstants'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import Toast from 'react-bootstrap/Toast'
 import 'bootstrap/js/src/collapse.js'
 import ProfileNavigator from './navigators/profileNavigator'
 import AuctionsNavigator from './navigators/auctionsNavigator'
-import { useQuery } from 'react-query'
-import { fetchMe } from 'api/Api'
+import {useQuery} from 'react-query'
 import WhiteNavigatorProfile from './navigators/whiteNavigatorProfile'
 import {placeAuction} from '../../api/Auctions'
 
@@ -18,56 +18,98 @@ const LoggedInNavBar: FC = () => {
     const location = useLocation() // Use the useLocation hook to get the current route information.
     const [apiError, setApiError] = useState('')
     const [showError, setShowError] = useState(false)
-    const { data, isLoading, error } = useQuery('fetchMe', fetchMe, {
-        keepPreviousData: true,
-        refetchOnWindowFocus: false,
-    })
     const [showPopup, setShowPopup] = useState(false)
     const [showProfileSettingsPopup, setShowProfileSettingsPopup] = useState(false)
     const [showChangePasswordPopup, setshowChangePasswordPopup] = useState(false)
     const [changeProfilePicturePopup, setchangeProfilePicturePopup] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [image, setImage] = useState<string | null>(null)
-
-    // adding auctions
     const [addAuctionPopup, setaddAuctionPopup] = useState(false)
-
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [startPrice, setStartPrice] = useState('')
     const [endTime, setEndTime] = useState('')
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [email, setEmail] = useState('')
+    const { data, isLoading, error } = useQuery('fetchMe', fetchMe, {
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    })
+    // navigator and show the greeting message
+    let navigator
+    if (location.pathname.startsWith('/profile')) {
+        navigator = <ProfileNavigator />
+    } else if (location.pathname.startsWith('/auctions')) {
+        navigator = <AuctionsNavigator />
+    } else if (location.pathname.startsWith('/won')) {
+        navigator = <ProfileNavigator />
+    } else if (location.pathname.startsWith('/bidding')) {
+        navigator = <ProfileNavigator />
+    } else if (location.pathname.startsWith('/auction')) {
+        navigator = <WhiteNavigatorProfile />
+    }
+    const showGreeting = !location.pathname.startsWith('/auction')
 
+    useEffect(() => {
+        if (data) {
+            setFirstName(data.first_name)
+            setLastName(data.last_name)
+            setEmail(data.email)
+        }
+    }, [data]) // Make sure to add data as a dependency here
+
+    const handleProfileUpdate = async (e: { preventDefault: () => void }) => {
+        e.preventDefault() // Prevent the default form submission behavior
+
+        const userData = {
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+        }
+
+        const userId = data.id // Assuming 'data.id' contains the user's ID.
+
+        try {
+            const response = await updateUser(userData, userId)
+            console.log('User updated successfully', response)
+            setShowProfileSettingsPopup(false) // Close the popup on success
+            window.location.reload()
+        } catch (error) {
+            console.error('Error updating user:', error)
+        }
+    }
+
+    
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        // Check if any of the fields are empty
+        // check if any of the fields are empty
         if (!title || !description || !startPrice || !endTime || !selectedFile) {
             alert('All fields are required and an image must be selected.')
             return
         }
 
-        // Validate date format (dd.mm.yyyy)
-        const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/
+        // validate date format (dd.mm.yyyy)
+        const dateRegex = /^\d{1,2}\.\d{1,2}\.\d{4}$/
         if (!dateRegex.test(endTime)) {
             alert('Date must be in the format dd.mm.yyyy')
             return
         }
 
-        // Validate if price is a number
+        // validate if price is a number
         const price = parseFloat(startPrice)
         if (isNaN(price)) {
             alert('Price must be a number.')
             return
         }
-
-        // Transform "dd.mm.yyyy" into ISO format
+        // Transform "dd.mm.yyyy" into ISO format - you can also do d.m.yyyy :)
         const transformDateToISO = (dateStr: string): string => {
             const parts = dateStr.split('.')
             const day = parseInt(parts[0], 10)
             const month = parseInt(parts[1], 10)
             const year = parseInt(parts[2], 10)
-            const isoDate = new Date(year, month - 1, day).toISOString()
-            return isoDate
+            return new Date(year, month - 1, day).toISOString()
         }
 
         const formattedEndTime = transformDateToISO(endTime)
@@ -81,7 +123,6 @@ const LoggedInNavBar: FC = () => {
 
         try {
             await placeAuction(formData)
-            // Reset form state after successful submission
             setTitle('')
             setDescription('')
             setStartPrice('')
@@ -89,19 +130,20 @@ const LoggedInNavBar: FC = () => {
             setSelectedFile(null)
             setImage(null)
             setaddAuctionPopup(false)
+
+            // reload the page to reflect the new auction
+            window.location.reload()
         } catch (error) {
             console.error('Failed to place auction:', error)
         }
     }
 
-
-
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files ? e.target.files[0] : null
         if (file) {
-            setSelectedFile(file) // This updates the selectedFile state.
+            setSelectedFile(file)
             const imageUrl = URL.createObjectURL(file)
-            setImage(imageUrl) // Preview the selected image.
+            setImage(imageUrl)
         }
     }
 
@@ -123,21 +165,6 @@ const LoggedInNavBar: FC = () => {
             navigate('/')
         }
     }
-
-    let navigator
-    if (location.pathname.startsWith('/profile')) {
-        navigator = <ProfileNavigator />
-    } else if (location.pathname.startsWith('/auctions')) {
-        navigator = <AuctionsNavigator />
-    } else if (location.pathname.startsWith('/won')) {
-        navigator = <ProfileNavigator />
-    } else if (location.pathname.startsWith('/bidding')) {
-        navigator = <ProfileNavigator />
-    } else if (location.pathname.startsWith('/auction')) {
-        navigator = <WhiteNavigatorProfile />
-    }
-    const showGreeting = !location.pathname.startsWith('/auction')
-
 
     return (
         <>
@@ -202,13 +229,12 @@ const LoggedInNavBar: FC = () => {
                 <div className="add-auction-container">
                     <h4>Add auction</h4>
                     <form onSubmit={handleFormSubmit}>
-
                         {image ? (
                             <div className="add-auction-image-filled" style={{
                                 position: 'relative',
                                 backgroundImage: `url(${image})`,
                                 backgroundSize: 'cover',
-                                backgroundPosition: 'center' /* Adjust as needed */
+                                backgroundPosition: 'center'
                             }}>
                                 <button onClick={clearImage} className="trash-button-image">
                                     <img
@@ -273,8 +299,8 @@ const LoggedInNavBar: FC = () => {
                                             value={endTime}
                                             onChange={(e) => setEndTime(e.target.value)}
                                             placeholder="dd.mm.yyyy"
-                                            pattern="\d{2}\.\d{2}\.\d{4}" // Pattern to enforce "dd.mm.yyyy" format
-                                            title="Date format should be DD.MM.YYYY"
+                                            pattern="([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{4})"
+                                            title="Date format should be dd.mm.yyyy or d.m.yyyy"
                                         />
                                         <img
                                             src="/images/icons/time_grey.png"
@@ -286,7 +312,7 @@ const LoggedInNavBar: FC = () => {
                             </div>
                             <div className="profile-settings-cancel-save-container">
                                 <button className="profile-settings-cancel-btn"
-                                        onClick={() => setaddAuctionPopup(false)}>
+                                        onClick={() => setShowProfileSettingsPopup(false)}>
                                     <h5>Cancel</h5>
                                 </button>
                                 <div className="profile-settings-save-btn ">
@@ -299,10 +325,9 @@ const LoggedInNavBar: FC = () => {
                         </div>
                     </form>
                 </div>
-                )}
+            )}
 
             {showPopup && (
-                <div className='container-testing-1440'>
                     <div className="signout-popup">
                         <button className="profile-settings-button"
                                 onClick={(e) => {
@@ -325,74 +350,77 @@ const LoggedInNavBar: FC = () => {
                             Log Out
                         </button>
                     </div>
-                </div>
-
             )}
 
             {showProfileSettingsPopup && (
                 <div className="profile-settings-popup">
                     <h4>Profile settings</h4>
-                    <div className="popup-inside-container">
-                        <div className="popup-name-surname-container">
-                            <div className="popup-name-container">
-                                <div className="prfl-stgs-normal-text">
-                                    Name
+                    <form onSubmit={handleProfileUpdate}>
+                        <div className="popup-inside-container">
+                            <div className="popup-name-surname-container">
+                                <div className="popup-name-container">
+                                    <div className="prfl-stgs-normal-text">Name</div>
+                                    <input
+                                        className="profile-settings-input-element"
+                                        type="text"
+                                        value={firstName}
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                    />
                                 </div>
-                                <input type="text"
-                                       className="profile-settings-input-element"
+                                <div className="popup-name-container">
+                                    <div className="prfl-stgs-normal-text">Surname</div>
+                                    <input
+                                        className="profile-settings-input-element"
+                                        type="text"
+                                        value={lastName}
+                                        onChange={(e) => setLastName(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="profile-settings-email-container">
+                                <div className="prfl-stgs-normal-text">Email</div>
+                                <input
+                                    className="profile-settings-input-element"
+                                    style={{width: '501px'}}
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
-                            <div className="popup-name-container">
-                                <div className="prfl-stgs-normal-text">
-                                    Surname
-                                </div>
-                                <input type="text"
-                                       className="profile-settings-input-element"
-                                />
+                            <div
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    setshowChangePasswordPopup(true)
+                                    setShowProfileSettingsPopup(false)
+                                }}
+                                style={{cursor: 'pointer'}}
+                            >
+                                <h5>Change password</h5>
+                            </div>
+                            <div
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    setchangeProfilePicturePopup(true)
+                                    setShowProfileSettingsPopup(false)
+                                }}
+                                style={{cursor: 'pointer'}}
+                            >
+                                <h5>Change profile picture</h5>
                             </div>
                         </div>
-                        <div className="profile-settings-email-container">
-                            <div className="prfl-stgs-normal-text">
-                                Email
-                            </div>
-                            <input type="text"
-                                   className="profile-settings-email-input-element"
-                            />
+                        <div className="profile-settings-cancel-save-container">
+                            <button type="button" className="profile-settings-cancel-btn" onClick={() => setShowProfileSettingsPopup(false)}>
+                                <h5>Cancel</h5>
+                            </button>
+                            <button type="submit" className="profile-settings-save-btn">
+                                <h5>Save changes</h5>
+                            </button>
                         </div>
-                        <div
-                            onClick={(e) => {
-                                e.stopPropagation()
-                                setshowChangePasswordPopup(true) // Explicitly open the Change Password Popup
-                                setShowPopup(false) // Ensure the main popup is closed
-                                setShowProfileSettingsPopup(false) // Ensure the Profile Settings Popup is closed
-                            }}
-                            style={{cursor: 'pointer'}}
-                        >
-                            <h5>Change password</h5>
-                        </div>
-                        <div
-                            onClick={(e) => {
-                                e.stopPropagation()
-                                setchangeProfilePicturePopup(true)
-                                setShowPopup(false) // Ensure the main popup is closed
-                                setShowProfileSettingsPopup(false) // Ensure the Profile Settings Popup is closed
-                            }}
-                            style={{cursor: 'pointer'}}
-                        >
-                            <h5>Change profile picture</h5>
-                        </div>
-                    </div>
-                    <div className="profile-settings-cancel-save-container">
-                        <button className="profile-settings-cancel-btn"
-                                onClick={() => setShowProfileSettingsPopup(false)}>
-                            <h5>Cancel</h5>
-                        </button>
-                        <div className="profile-settings-save-btn ">
-                            <h5>Save changes</h5>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             )}
+
+
 
             {showChangePasswordPopup && (
                 <div className="profile-settings-popup">

@@ -6,11 +6,13 @@ export enum apiRoutes {
   REFRESH_TOKENS = '/auth/refresh',
   UPLOAD_AVATAR_IMAGE = '/users/upload',
 
+  UPDATE_USER = '/users/',
+
   FETCH_BIDS = '/bids/auction/',
   PLACE_BID = '/bids',
 
   PLACE_AUCTION = '/auctions',
-
+  UPDATE_AUCTION = '/auctions/',
   DELETE_AUCTION = '/auctions/',
 
   FETCH_ALLAUCTIONS = '/auctions',

@@ -65,7 +65,18 @@ const Profile: FC = () => {
                 return null
             }).filter(Boolean)
         }
-        return <p>No auctions to display.</p>
+        return (
+            <>
+                <div className="main-container-empty-state-bidding-won">
+                    <div className="inner-empty-state-container">
+                        <div className="heading-empty-state-text">Nothing here yet?</div>
+                        <div className="text-empty-state-text">
+                            {'When you win auction, items will be displayed here! Go on and bid on your favorite items!'}
+                        </div>
+                    </div>
+                </div>
+            </>
+        )
     }
 
     return (
@@ -74,7 +85,9 @@ const Profile: FC = () => {
             <div className="container-1440 primaryBackground" >
                 <div className="parent d-flex flex-column align-items-center">
                     <WonNavigator/>
-                    <div className="auctions-container" style={{paddingTop: '18px'}}>
+                    <div
+                        className={data && data.length > 0 ? 'auctions-container' : ''}
+                        style={{paddingTop: '18px'}}>
                         {renderAuctions()}
                     </div>
                 </div>

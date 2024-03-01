@@ -13,6 +13,8 @@ import InProgressDefault from '../../components/ui/tags/default/status/inProgres
 import {useQuery} from 'react-query'
 import {fetchMe} from '../../api/User'
 import DoneDefault from '../../components/ui/tags/default/status/done'
+import ReactModal from 'react-modal'
+import WonDefault from '../../components/ui/tags/default/status/won'
 
 const AuctionDetail = () => {
     const { id } = useParams<string>()
@@ -20,6 +22,8 @@ const AuctionDetail = () => {
     const [bids, setBids] = useState<BidType[]>([])
     const [auctionError, setAuctionError] = useState<Error | null>(null)
     const [bidAmount, setBidAmount] = useState('')
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const toggleModal = () => setIsModalOpen(!isModalOpen)
 
     const { data: userData, isLoading, error } = useQuery('fetchMe', fetchMe, {
         keepPreviousData: true,
@@ -124,38 +128,39 @@ const AuctionDetail = () => {
     const remainingDays = calculateRemainingDays(auction)
 
     const getUserBiddingStatus = () => {
-        const highestBid = bids[0] // Get the highest bid
+        const now = new Date()
+        const endTime = new Date(auction?.endTime || now)
+        const highestBid = bids[0] // Assuming bids are sorted with the highest first
         const userHasBids = bids.some(bid => bid.user.id === currentUserID)
-        const userIsWinning = highestBid && highestBid.user.id === currentUserID
+        const auctionEnded = now >= endTime
 
-        if (!userHasBids) {
-            return 'inProgress'
-        } else if (userIsWinning) {
+        if (auctionEnded && highestBid && highestBid.user.id === currentUserID) {
+            return 'won'
+        } else if (!auctionEnded && userHasBids && highestBid && highestBid.user.id === currentUserID) {
             return 'winning'
-        } else {
+        } else if (userHasBids) {
             return 'outbid'
         }
+        return 'inProgress'
     }
 
     const biddingStatus = getUserBiddingStatus()
+
 
     return (
         <>
             <LoggedInNavBar/>
             <div className="container-1440-details-page">
-                <div className="auction-image-details">
-                    <img className=""
-                         src={`${process.env.REACT_APP_API_URL}${auction?.imageUrl}`}
-                         alt="profile_w"
-                    />
+                <div className="auction-image-details" onClick={toggleModal} role="button" aria-label="Preview image">
+                    <img src={`${process.env.REACT_APP_API_URL}${auction?.imageUrl}`} alt="Auction Item"/>
                 </div>
                 <div className="auction-details-right-container">
                     <div className="item-detail-description">
                         <div className="time-element">
                             {biddingStatus === 'inProgress' && <InProgressDefault/>}
-
                             {biddingStatus === 'winning' && <WinningDefault/>}
                             {biddingStatus === 'outbid' && <OutbidDefault/>}
+                            {biddingStatus === 'won' && <WonDefault />}
 
 
                             {remainingDays !== null && remainingDays > 1 && <MoreThanADayTag time={remainingDays}/>}
@@ -167,7 +172,8 @@ const AuctionDetail = () => {
                             {auction?.description || ''}
                         </div>
 
-                        {remainingDays !== null && (
+                        {/*Ne pokaže v primeru, da je auction ustvaril currentUser ali je endTime ze zgodil*/}
+                        {remainingDays !== null && auction?.userId !== currentUserID && (
                             <div className="item-detail-placing-bid">
                                 Bid:
                                 <div className="bid-input-container">
@@ -179,25 +185,39 @@ const AuctionDetail = () => {
                                 </div>
                                 <div
                                     className="place-bid-yellow-container place-bid-text"
-                                    onClick={submitBid} // Use the submitBid function here
+                                    onClick={submitBid}
                                 >
                                     Place bid
                                 </div>
                             </div>
                         )}
 
+
                     </div>
                     <div className="item-detail-bidding-history">
                         <div className="bidding-history-title-container bidding-history-text">
                             Bidding history({bids.length})
                         </div>
-                        <div>
+                        <div className="item-detail-bidding-history-container">
                             {renderBids()}
                         </div>
                     </div>
                 </div>
 
             </div>
+            <ReactModal isOpen={isModalOpen} onRequestClose={toggleModal} ariaHideApp={false} className="show-image-bigger">
+                <div style={{ position: 'relative' }}>
+                    <img src={`${process.env.REACT_APP_API_URL}${auction?.imageUrl}`} alt="Auction Item Preview" style={{ width: '100%', height: 'auto', maxHeight: '600px' }} />
+                    <button
+                        onClick={toggleModal}
+                        className="close-image-button"
+                    >
+                        X
+                    </button>
+                </div>
+            </ReactModal>
+
+
         </>
 
     )

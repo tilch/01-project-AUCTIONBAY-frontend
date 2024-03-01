@@ -107,7 +107,19 @@ const Profile: FC = () => {
                 )
             })
         }
-        return <p>No auctions to display.</p>
+        return (
+            <>
+                <div className="main-container-empty-state-bidding-won">
+                    <div className="inner-empty-state-container">
+                        <div className="heading-empty-state-text">No bidding in progress!</div>
+                        <div className="text-empty-state-text">
+                            {'Start bidding by finding new items you like on "Auction" page!'}
+                        </div>
+                    </div>
+                </div>
+            </>
+
+        )
     }
 
 
@@ -117,7 +129,9 @@ const Profile: FC = () => {
             <div className="container-1440 primaryBackground" >
                 <div className="parent d-flex flex-column align-items-center">
                     <BiddingNavigator/>
-                    <div className="auctions-container" style={{paddingTop: '18px'}}>
+                    <div
+                        className={data && data.length > 0 ? 'auctions-container' : ''}
+                        style={{paddingTop: '18px'}}>
                         {renderAuctions()}
                     </div>
                 </div>

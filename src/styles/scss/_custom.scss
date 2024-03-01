@@ -28,7 +28,7 @@
 
 .heading-container {
   width: 1440px; /* Your desired width */
-  padding: 15px 32px 32px; /* Adjusted padding (top, right & bottom, left) */
+  padding: 15px 32px; /* Adjusted padding (top, right & bottom, left) */
   gap: 16px; /* Gap between child elements */
   margin: 0 auto; /* Centers the block horizontally */
   display: flex; /* Assuming you want its children to be flex items */
@@ -298,13 +298,16 @@
 
 
 .auctions-container {
+  width: 1440px;
   display: grid;
+  padding: 0px 32px 32px 32px; /* Padding: top right bottom left */
   grid-template-columns: repeat(6, 1fr); /* Creates 6 columns */
-  gap: 10px; /* Adjust the gap between items as needed */
-  padding: 0px 32px 32px 32px; /* top right bottom left padding */
-  gap: 16px
-
+  column-gap: 1px;
+  row-gap: 10px;
+  justify-items: center; /* Center items horizontally */
+  align-items: center; /* Center items vertically */
 }
+
 
 /* Styles for the auction card */
 .auction-profile-card {
@@ -370,8 +373,12 @@
   gap: 8px;
 }
 .element-twohundred {
-  width: 200px;
-  height: 24px;
+  min-width: 200px;
+  max-width: 200px; /* Set the maximum width of the element */
+  overflow: hidden; /* Hide overflow content */
+  text-overflow: ellipsis; /* Show ellipsis (...) for overflow text */
+  white-space: nowrap; /* Ensure text does not wrap */
+  display: block;
 }
 
 
@@ -597,7 +604,8 @@ h1 {
   text-align: left;
 }
 .item-detail-description-container {
-  height: 96px;
+  max-height: 96px;
+  overflow-y: auto; /* Enable vertical scrollbar if content exceeds max height */
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 300;
@@ -605,6 +613,7 @@ h1 {
   letter-spacing: 0em;
   text-align: left;
 }
+
 .item-detail-placing-bid {
   height: 41px;
   width: 648px;
@@ -654,7 +663,7 @@ h1 {
   text-align: left;
 }
 .bidding-history-title-container {
-  width: 205px;
+  width: auto;
   height: 28px;
   margin-bottom: 7px;
 }
@@ -840,24 +849,17 @@ h1 {
 }
 
 .signout-popup {
-  width: 204px;
-  height: 129px;
+  top: 80px;
+  left: 80px;
   padding: 16px;
-  align-items: center;
-  right: 0px;
   border-radius: 16px;
-  gap: 17px;
-  background: #FFFFFF; /* Correct hex code for white */
-  box-shadow: 0px 0px 0px 0px #0000001A,
-  0px 4px 8px 0px #0000001A,
-  0px 15px 15px 0px #00000017,
-  0px 34px 21px 0px #0000000D,
-  0px 61px 24px 0px #00000003,
-  0px 96px 27px 0px #00000000;
+  position: fixed;
+  gap: 16px;
+  background-color: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  z-index: 1000; /* Ensure it's higher than the z-index of other elements */
+  justify-content: center; /* Center vertically */
+  align-items: center; /* Center horizontally */
 }
 .profile-settings-button {
   width: 172px;
@@ -910,7 +912,7 @@ h1 {
 .profile-settings-popup {
   width: 533px;
   height: auto; /* Adjusts based on content */
-  top: 86px;
+  top: 80px;
   left: 80px;
   padding: 16px;
   border-radius: 16px;
@@ -921,6 +923,7 @@ h1 {
   flex-direction: column;
   justify-content: space-evenly;
 }
+
 h4 {
   font-family: 'Inter', sans-serif;
   font-size: 23px;
@@ -1343,4 +1346,79 @@ h5 {
   border: none;
   outline: none;
 }
+.show-image-bigger {
+  display: flex;
+  justify-content: center; /* Horizontally center the container */
+  align-items: center; /* Vertically center the container */
+  height: 100vh; /* Make the container take up the entire viewport height */
+}
+
+.show-image-bigger img {
+  max-width: 100%; /* Ensure the image doesn't exceed the container's width */
+  max-height: 100%; /* Ensure the image doesn't exceed the container's height */
+  border-radius: 16px;
+  border: 3px solid #071015;
+}
+.close-image-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+.main-container-won-bidding-auctions {
+  width: 1440px;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Horizontally center content */
+  gap: 16px;
+}
+.main-container-empty-state-bidding-won {
+  height: 786px;
+  width: 1440px;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.inner-empty-state-container {
+  width: 331px;
+  height: 111px;
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center vertically */
+  text-align: center; /* Center text horizontally */
+}
+.heading-empty-state-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 31px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #071015;
+}
+.text-empty-state-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: #74817F;
+}
+.item-detail-bidding-history-container {
+  max-height: 500px;
+  overflow-y: auto; /* Enables vertical scrolling */
+}
+
 

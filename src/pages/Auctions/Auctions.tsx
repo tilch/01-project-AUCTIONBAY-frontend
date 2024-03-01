@@ -1,4 +1,4 @@
-import React, {FC} from 'react'
+import React, {FC, useState} from 'react'
 import LoggedInNavBar from '../../components/ui/LoggedInNavBar'
 import {useQuery} from 'react-query'
 import {fetchAllAuctions} from '../../api/Auctions'
@@ -6,12 +6,11 @@ import {AuctionType} from '../../models/Auction'
 import {Link} from 'react-router-dom'
 import DoneSmall from '../../components/ui/tags/small/status/done'
 import InProgressSmall from '../../components/ui/tags/small/status/inprogress'
-import MoreThanADayTagSmall from '../../components/ui/tags/small/time/moreThanADay'
 import LastDayTagSmall from '../../components/ui/tags/small/time/lastDay'
 import {fetchMe} from '../../api/User'
 import WinningSmall from '../../components/ui/tags/small/status/winning'
-import OutbidSmall from '../../components/ui/tags/small/status/outbid'
 import MoreThanADayTagWordSmall from '../../components/ui/tags/small/time/moreThanADayWord'
+import OutbidSmall from '../../components/ui/tags/small/status/outbid'
 
 const Profile: FC = () => {
     const { data: userData, isLoading: isUserLoading, error: userError,} = useQuery('fetchMe', fetchMe, {
@@ -19,6 +18,7 @@ const Profile: FC = () => {
         refetchOnWindowFocus: false,
     })
     const currentUserID = userData ? userData.id : null
+
     function getAuctionStatusAndTime(auction: AuctionType): [string, number | null, number | null] {
         const now = new Date()
         const startTime = new Date(auction.startTime)
@@ -39,16 +39,16 @@ const Profile: FC = () => {
     }
 
     const getUserBiddingStatus = (auction: AuctionType) => {
-        // Assuming `auction.currentWinner` holds the user ID of the current highest bidder.
-        // This will directly compare the current user's ID with the auction's current winner.
-        if (auction.currentWinner === currentUserID) {
-            return 'winning'
-        } else if (auction.currentWinner && auction.currentWinner !== currentUserID) {
-            return 'outbid'
-        } else if (auction.currentWinner == null) {
-            return 'empty'
+        // Assuming currentWinner is an ID. Adjust logic as needed.
+        const isCurrentUserWinning = auction.currentWinner === currentUserID
+
+        if (auction.userHasBid) {
+            return isCurrentUserWinning ? 'winning' : 'outbid'
+        } else {
+            // If the user hasn't bid, you might want to show 'inProgress', 'notStarted', or some other status.
+            // Adjust this logic based on your app's requirements.
+            return 'inProgress'
         }
-        return 'inProgress' // Default status if there's no winner or if the auction hasn't ended.
     }
 
 
@@ -79,8 +79,8 @@ const Profile: FC = () => {
                                 {daysRemaining !== null && hoursRemaining !== null ? (
                                     <>
                                         {biddingStatus === 'winning' && <WinningSmall/>}
-                                        {biddingStatus === 'outbid' && <InProgressSmall/>}
-                                        {biddingStatus === 'empty' && <InProgressSmall/>}
+                                        {biddingStatus === 'outbid' && <OutbidSmall/>}
+                                        {biddingStatus === 'inProgress' && <InProgressSmall/>}
                                         {hoursRemaining > 25 ? (
                                             <MoreThanADayTagWordSmall time={daysRemaining}/>
                                         ) : (
@@ -125,7 +125,17 @@ const Profile: FC = () => {
                 )
             })
         }
-        return <p>No auctions to display.</p>
+        return (
+            <>
+                <div className="main-container-empty-state-bidding-won">
+                    <div className="inner-empty-state-container">
+                        <div className="heading-empty-state-text">Oh no, no auctions yet!</div>
+                        <div className="text-empty-state-text">
+                            {'To add new auction click "+" button in navigation bar or wait for other users to add new auctions.'}                        </div>
+                    </div>
+                </div>
+            </>
+        )
     }
 
     return (
@@ -133,6 +143,11 @@ const Profile: FC = () => {
             <LoggedInNavBar/>
             <div className="container-1440 primaryBackground">
                 <div className="parent d-flex flex-column align-items-center">
+                    <div className="heading-container">
+                        <div className="heading-h1 custom-heading">
+                            Auctions
+                        </div>
+                    </div>
                     <div className="auctions-container" style={{paddingTop: '18px'}}>
                         {renderAuctions()}
                     </div>

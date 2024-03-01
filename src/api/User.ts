@@ -26,6 +26,25 @@ export const fetchMe = async () => {
   return response.data
 }
 
+export const updateUser = async (userData: { first_name: string; last_name: string; email: string; }, userId: string) => {
+  const jwtToken = getJwtTokenFromCookie()
+  const url = `${process.env.REACT_APP_API_URL}/users/${userId}`
+
+  try {
+    const response = await axios.put(url, userData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwtToken}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error updating user:', error)
+    throw new Error('Failed to update user. Please try again.')
+  }
+}
+
+
 export const login = async (data: LoginUserFields) =>
   apiRequest<LoginUserFields, UserType>('post', apiRoutes.LOGIN, data)
 
