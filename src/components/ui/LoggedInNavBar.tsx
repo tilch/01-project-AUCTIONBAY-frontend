@@ -12,6 +12,7 @@ import AuctionsNavigator from './navigators/auctionsNavigator'
 import {useQuery} from 'react-query'
 import WhiteNavigatorProfile from './navigators/whiteNavigatorProfile'
 import {placeAuction} from '../../api/Auctions'
+import Cookies from 'js-cookie'
 
 const LoggedInNavBar: FC = () => {
     const navigate = useNavigate()
@@ -26,8 +27,13 @@ const LoggedInNavBar: FC = () => {
     const [image, setImage] = useState<string | null>(null)
     const [addAuctionPopup, setaddAuctionPopup] = useState(false)
     const [title, setTitle] = useState('')
+    const [avatarUrl, setAvatarUrl] = useState('/images/profile_pic.png')
     const [description, setDescription] = useState('')
     const [startPrice, setStartPrice] = useState('')
+    const [userEmail, setUserEmail] = useState('')
+    const [oldPassword, setOldPassword] = useState('')
+    const [newPassword, setNewPassword] = useState('')
+    const [repeatNewPassword, setRepeatNewPassword] = useState('')
     const [endTime, setEndTime] = useState('')
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
@@ -56,9 +62,66 @@ const LoggedInNavBar: FC = () => {
             setFirstName(data.first_name)
             setLastName(data.last_name)
             setEmail(data.email)
+            setAvatarUrl(data.avatar || '/images/profile_pic.png') // Use the avatar from fetched data, fallback to default
         }
-    }, [data]) // Make sure to add data as a dependency here
+    }, [data])
 
+    const handleChangePassword = async (e: { preventDefault: () => void }) => {
+        e.preventDefault()
+
+        if (newPassword !== repeatNewPassword) {
+            alert('New passwords do not match.')
+            return
+        }
+
+        const userData = {
+            oldPassword: oldPassword,
+            newPassword: newPassword,
+            email: userEmail,
+        }
+
+        try {
+            const response = await API.changePassword(userData)
+            console.log('Password changed successfully', response)
+            setOldPassword('')
+            setNewPassword('')
+            setRepeatNewPassword('')
+
+            setshowChangePasswordPopup(false)
+        } catch (error) {
+            console.error('Error changing password:', error)
+        }
+    }
+
+    const handleUploadAvatar = async () => {
+        if (!selectedFile) {
+            alert('Please select a file to upload.')
+            return
+        }
+
+        const formData = new FormData()
+        formData.append('image', selectedFile)
+
+        try {
+            await API.uploadAvatar(formData, data.id)
+            alert('Avatar uploaded successfully.')
+
+            const newAvatarUrl = `${process.env.REACT_APP_API_URL}${avatarUrl}?timestamp=${new Date().getTime()}`
+            setAvatarUrl(newAvatarUrl)
+
+            setSelectedFile(null)
+            setImage(null)
+            setchangeProfilePicturePopup(false)
+            window.location.reload()
+
+        } catch (error) {
+            console.error('Error uploading avatar:', error)
+            alert('Failed to upload avatar. Please try again.')
+        }
+    }
+
+
+    
     const handleProfileUpdate = async (e: { preventDefault: () => void }) => {
         e.preventDefault() // Prevent the default form submission behavior
 
@@ -68,12 +131,12 @@ const LoggedInNavBar: FC = () => {
             email: email,
         }
 
-        const userId = data.id // Assuming 'data.id' contains the user's ID.
+        const userId = data.id
 
         try {
             const response = await updateUser(userData, userId)
             console.log('User updated successfully', response)
-            setShowProfileSettingsPopup(false) // Close the popup on success
+            setShowProfileSettingsPopup(false)
             window.location.reload()
         } catch (error) {
             console.error('Error updating user:', error)
@@ -156,14 +219,9 @@ const LoggedInNavBar: FC = () => {
     }
 
     const signout = async () => {
-        const response = await API.signout()
-        if (response.data?.statusCode === StatusCode.BAD_REQUEST || response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-            setApiError(response.data.message)
-            setShowError(true)
-        } else {
-            authStore.signout()
-            navigate('/')
-        }
+        Cookies.remove('token')
+        authStore.signout()
+        navigate('/')
     }
 
     return (
@@ -195,7 +253,7 @@ const LoggedInNavBar: FC = () => {
                                     <div>
                                         <img
                                             className="profile-circle"
-                                            src="/images/profile_pic.png"
+                                            src={`${process.env.REACT_APP_API_URL}${avatarUrl}`}
                                             alt="ProfilePic"
                                             style={{width: '56px', height: '56px'}}
                                             onClick={() => setShowPopup(!showPopup)}
@@ -420,42 +478,48 @@ const LoggedInNavBar: FC = () => {
                 </div>
             )}
 
-
-
             {showChangePasswordPopup && (
                 <div className="profile-settings-popup">
-                <h4>Change password</h4>
-                    <div className="popup-inside-container">
+                    <h4>Change password</h4>
+                    <form onSubmit={handleChangePassword} className="popup-inside-container">
                         <div className="pswrd-container">
                             <div className="prfl-stgs-normal-text">Current password</div>
-                            <input className="change-pass-container"
-                                   type="password"
+                            <input
+                                className="change-pass-container"
+                                type="password"
+                                value={oldPassword}
+                                onChange={(e) => setOldPassword(e.target.value)}
                             />
                         </div>
 
                         <div className="pswrd-container">
                             <div className="prfl-stgs-normal-text">New password</div>
-                            <input className="change-pass-container"
-                                   type="password"
+                            <input
+                                className="change-pass-container"
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
                             />
                         </div>
 
                         <div className="pswrd-container">
                             <div className="prfl-stgs-normal-text">Repeat new password</div>
-                            <input className="change-pass-container"
-                                   type="password"
+                            <input
+                                className="change-pass-container"
+                                type="password"
+                                value={repeatNewPassword}
+                                onChange={(e) => setRepeatNewPassword(e.target.value)}
                             />
                         </div>
-                    </div>
-                    <div className="profile-settings-cancel-save-container">
-                        <button className="profile-settings-cancel-btn"
-                                onClick={() => setshowChangePasswordPopup(false)}>
-                            <h5>Cancel</h5>
-                        </button>
-                        <div className="profile-settings-save-btn ">
-                            <h5>Save changes</h5>
+                        <div className="profile-settings-cancel-save-container">
+                            <button className="profile-settings-cancel-btn" onClick={() => setshowChangePasswordPopup(false)}>
+                                <h5>Cancel</h5>
+                            </button>
+                            <button type="submit" className="profile-settings-save-btn">
+                                <h5>Save changes</h5>
+                            </button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             )}
 
@@ -463,30 +527,40 @@ const LoggedInNavBar: FC = () => {
                 <div className="profile-settings-popup">
                     <h4>Change profile picture</h4>
                     <div className="popup-inside-container" style={{display: 'flex', alignItems: 'center'}}>
-                        <img
-                            className="profile-circle"
-                            src="/images/profile_pic.png"
-                            alt="ProfilePic"
-                            style={{width: '56px', height: '56px'}}
-                        />
-                        <button className="upload-picture-button">
-                            <div className="upload-picture-button-text">
-                                Upload new picture
-                            </div>
+                        {image ? (
+                            <img
+                                className="profile-circle"
+                                src={image}
+                                alt="Profile Preview"
+                                style={{width: '56px', height: '56px'}}
+                            />
+                        ) : (
+                            <img
+                                className="profile-circle"
+                                src={`${process.env.REACT_APP_API_URL}${avatarUrl}`}
+                                alt="Current Profile Pic"
+                                style={{width: '56px', height: '56px'}}
+                            />
+                        )}
+                        <input type="file" id="fileInput" style={{display: 'none'}} onChange={handleImageChange}/>
+                        <button className="upload-picture-button"
+                                onClick={() => document.getElementById('fileInput')?.click()}>
+                            <div className="upload-picture-button-text">Select new picture</div>
                         </button>
                     </div>
 
                     <div className="profile-settings-cancel-save-container">
-                        <button className="profile-settings-cancel-btn"
-                                onClick={() => setchangeProfilePicturePopup(false)}>
+                        <button className="profile-settings-save-btn" onClick={handleUploadAvatar}>
+                            <h5>Upload</h5>
+                        </button>
+                        <button className="profile-settings-cancel-btn" onClick={() => setchangeProfilePicturePopup(false)}>
                             <h5>Cancel</h5>
                         </button>
-                        <div className="profile-settings-save-btn ">
-                            <h5>Save changes</h5>
-                        </div>
                     </div>
                 </div>
             )}
+
+
         </>
     )
 }

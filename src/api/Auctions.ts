@@ -18,8 +18,6 @@ export const placeAuction = async (formData: FormData) => {
             baseURL: process.env.REACT_APP_API_URL,
             headers: {
                 'Authorization': `Bearer ${jwtToken}`,
-                // 'Content-Type': 'application/json', // Remove this line
-                // Axios will automatically set the correct Content-Type for FormData
             },
         })
         return response.data

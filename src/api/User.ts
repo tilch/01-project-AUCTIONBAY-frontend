@@ -26,6 +26,26 @@ export const fetchMe = async () => {
   return response.data
 }
 
+export const uploadAvatar = async (formData: FormData, userId: string) => {
+  const jwtToken = getJwtTokenFromCookie()
+  const url = `${process.env.REACT_APP_API_URL}${apiRoutes.UPLOAD_AVATAR_IMAGE}`
+
+  try {
+    const response = await axios.put(url, formData, {
+      headers: {
+        'Authorization': `Bearer ${jwtToken}`,
+        // Don't manually set 'Content-Type': 'multipart/form-data' here
+        // Axios will automatically set the correct Content-Type header for FormData
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error uploading avatar:', error)
+    throw new Error('Failed to upload avatar. Please try again.')
+  }
+}
+
+
 export const updateUser = async (userData: { first_name: string; last_name: string; email: string; }, userId: string) => {
   const jwtToken = getJwtTokenFromCookie()
   const url = `${process.env.REACT_APP_API_URL}/users/${userId}`
@@ -44,6 +64,24 @@ export const updateUser = async (userData: { first_name: string; last_name: stri
   }
 }
 
+export const changePassword = async (userData: { oldPassword: string; newPassword: string; email: string; }) => {
+  const jwtToken = getJwtTokenFromCookie()
+  const url = `${process.env.REACT_APP_API_URL}${apiRoutes.CHANGE_PASSWORD}`
+
+  try {
+    const response = await axios.post(url, userData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwtToken}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error updating password:', error)
+    throw new Error('Failed to change password. Please try again.')
+  }
+}
+
 
 export const login = async (data: LoginUserFields) =>
   apiRequest<LoginUserFields, UserType>('post', apiRoutes.LOGIN, data)
@@ -51,19 +89,3 @@ export const login = async (data: LoginUserFields) =>
 
 export const register = async (data: RegisterUserFields) =>
   apiRequest<RegisterUserFields, void>('post', apiRoutes.SIGNUP, data)
-
-
-export const uploadAvatar = async (formData: FormData, id: string) =>
-  apiRequest<FormData, void>(
-    'post',
-    `${apiRoutes.UPLOAD_AVATAR_IMAGE}/${id}`,
-    formData,
-  )
-
-
-export const signout = async () =>
-  apiRequest<undefined, void>('post', apiRoutes.SIGNOUT)
-
-
-export const refreshTokens = async () =>
-  apiRequest<undefined, UserType>('get', apiRoutes.REFRESH_TOKENS)
